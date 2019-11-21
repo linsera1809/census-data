@@ -71,7 +71,7 @@ public class Lookup {
     }
 
     private static void printResults(String inSurname, int freq, int rank){
-        System.out.println("The results for "+inSurname+" are: ");
+        System.out.println("The results for "+inSurname.toUpperCase()+" are: ");
         System.out.println("Frequency: "+freq);
         System.out.println("Rank: "+rank);
     }
