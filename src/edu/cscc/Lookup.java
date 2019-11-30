@@ -48,11 +48,11 @@ public class Lookup {
         ObjectInputStream ois = new ObjectInputStream(fis);
 
         /**
-         *  Line# 60 is needed to read objects into the hashmap, but is causing issues with
+         *  Line# 51 is needed to read objects into the hashmap, but is causing issues with
          *  NotSerializableExceptions & WriteAbortedExceptions.
          *
          *  Looking at documentation this is an issue with Serializable objects, but I have been
-         *  unable to resolve it. To run everything else, comment out the line and uncomment line 63
+         *  unable to resolve it. To run everything else, comment out the line and uncomment line 60
          */
         surHash = (HashMap<String, Surname>) ois.readObject();
 
