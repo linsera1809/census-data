@@ -29,7 +29,7 @@ public class CensusData implements Serializable {
             getUrlContents(censusData);
         }
         catch (ArrayIndexOutOfBoundsException aio) {
-
+            aio.printStackTrace();
         }
 
     }
@@ -40,7 +40,7 @@ public class CensusData implements Serializable {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream())) ;
 
         String line = null;
-        String regexPattern = "[ ] +";
+        String regexPattern = "[ ]+";
 
         while ((line = bufferedReader.readLine()) != null) {
             String[] info = line.split(regexPattern);
@@ -53,8 +53,6 @@ public class CensusData implements Serializable {
 
                 data.put(info[0], new Surname(info[0], Double.parseDouble(info[1]), Integer.parseInt(info[3])));
             }
-            //System.out.println(Arrays.toString(info));
-
         }
 
         bufferedReader.close();
