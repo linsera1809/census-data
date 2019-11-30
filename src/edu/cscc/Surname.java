@@ -1,5 +1,7 @@
 package edu.cscc;
 
+import java.io.Serializable;
+
 /**
  * @author Bobby Linse
  * Description: Create a Java class called Surname that holds a surname, the frequency of that surname (not cumulative
@@ -12,18 +14,16 @@ package edu.cscc;
  *
  */
 
-public class Surname {
+public class Surname implements java.io.Serializable {
+    private String surname;
+    private double frequency;
+    private int rank;
 
-    private static String surname;
-    private static int nameFreq;
-    private static int nameRank;
-
-    public Surname(String inSurname) {
-        surname = inSurname;
-     //   nameFreq = getNameFreq();
-     //   nameRank = getNameRank();
-        nameFreq = 0;
-        nameRank = 0;
+    //Constructor
+    public Surname(String surname, double frequency, int rank) {
+        this.surname = surname;
+        this.frequency = frequency;
+        this.rank = rank;
     }
 
     public String getSurname() {
@@ -31,24 +31,23 @@ public class Surname {
     }
 
     public void setSurname(String surname) {
-        Surname.surname = surname;
+        this.surname = surname;
     }
 
-    public int getNameFreq() {
-        return nameFreq;
+    public double getFrequency() {
+        return frequency;
     }
 
-    public void setNameFreq(int nameFreq) {
-        Surname.nameFreq = nameFreq;
+    public void setFrequency(int frequency) {
+        this.frequency = frequency;
     }
 
-    public int getNameRank() {
-        return nameRank;
+    public int getRank() {
+        return rank;
     }
 
-    public void setNameRank(int nameRank) {
-        Surname.nameRank = nameRank;
+    public void setRank(int rank) {
+        this.rank = rank;
     }
-
 
 }

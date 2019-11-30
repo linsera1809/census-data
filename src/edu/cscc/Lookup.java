@@ -1,6 +1,7 @@
 package edu.cscc;
 
-
+import java.io.*;
+import java.util.HashMap;
 import java.util.Scanner;
 
 /**
@@ -23,57 +24,64 @@ import java.util.Scanner;
 
 public class Lookup {
 
-    private static Surname surname = new Surname(null);
+    public static void main(String[] args) {
+        try {
+            doLookup();
+        }
+        catch (IOException e ) {
+            System.out.println("Something went wrong in reading surname.dat");
+            e.printStackTrace();
+        }
+        catch (ClassNotFoundException cnfe) {
+            System.out.println("Class not found error");
+            cnfe.printStackTrace();
+        }
 
-    public static void main(String args[]) {
-
+    }
+    public static void doLookup() throws IOException, ClassNotFoundException {
+        boolean programRunning = true;
+        HashMap<String, Surname> surHash = new HashMap<String, Surname>();
+        String inSur;
         Scanner in = new Scanner(System.in);
 
-        do{ //Run Program
+        FileInputStream fis = new FileInputStream("./surname.dat");
+        ObjectInputStream ois = new ObjectInputStream(fis);
 
-            System.out.println("Please enter a surname, or 'quit' to exit");
-            String inSurname = in.next();
+        /**
+         *  Line# 60 is needed to read objects into the hashmap, but is causing issues with
+         *  NotSerializableExceptions & WriteAbortedExceptions.
+         *
+         *  Looking at documentation this is an issue with Serializable objects, but I have been
+         *  unable to resolve it. To run everything else, comment out the line and uncomment line 63
+         */
+        surHash = (HashMap<String, Surname>) ois.readObject();
 
-            surname.setSurname(inSurname);
-            int freq = surname.getNameFreq();
-            int rank = surname.getNameRank();
+        // Comment out line# 63 after remedying error in line# 60
+        //surHash = null;
 
-            if(isProgramRunning()) {
-                printResults(getSurnameString(), freq, rank);
+
+
+        do {
+            System.out.println("Enter a surname ('Quit' to exit)");
+            inSur = in.next();
+
+            if (inSur.toLowerCase().equals("quit")) {
+                programRunning = false;
+
+            } else if (!surHash.containsKey(inSur.toLowerCase())) {
+                System.out.println("That name does not exist in the file!");
+
+            } else {
+                Surname toDisplay = surHash.get(inSur.toLowerCase());
+                System.out.println("Surname is " + toDisplay.getSurname());
+                System.out.println("Rank is " + toDisplay.getRank());
+                System.out.println("Frequency is " + toDisplay.getFrequency());
+
             }
+        } while(programRunning);
 
-        }while( isProgramRunning() );
-
+        ois.close();
+        fis.close();
         in.close();
-
     }
-
-    private static void deserializeHash() {
-        // TODO
-        // deserialize ,dat
-        // recreate HashMap
-        // return census data
-    }
-
-    private static String getSurnameString() {
-        return surname.getSurname();
-    }
-
-    private static boolean isProgramRunning(){
-        String keyword = getSurnameString();
-
-        if(keyword.toLowerCase().equals("quit")) {
-            return false;
-        }
-        else {
-            return true;
-        }
-    }
-
-    private static void printResults(String inSurname, int freq, int rank){
-        System.out.println("The results for "+inSurname.toUpperCase()+" are: ");
-        System.out.println("Frequency: "+freq);
-        System.out.println("Rank: "+rank);
-    }
-
 }

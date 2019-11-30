@@ -1,9 +1,11 @@
 package edu.cscc;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Arrays;
+import java.util.HashMap;
+
 
 /**
  * @author Bobby Linse
@@ -19,51 +21,47 @@ import java.net.URLConnection;
  *  November 2019
  */
 
-public class CensusData {
+public class CensusData implements Serializable {
 
-    public static void main(String args[]) {
+    public static void main(String[] args) throws IOException {
+        try {
+            HashMap<String, Surname> censusData = new HashMap<>();
+            getUrlContents(censusData);
+        }
+        catch (ArrayIndexOutOfBoundsException aio) {
 
-        String contents = getUrlContents("https://www2.census.gov/topics/genealogy/1990surnames/dist.all.last");
-        System.out.println(contents);
+        }
+
     }
 
-    public static void serializeData(){
+    private static void getUrlContents(HashMap<String, Surname> data) throws IOException {
+        URL link = new URL("https://www2.census.gov/topics/genealogy/1990surnames/dist.all.last");
+        URLConnection urlConnection = link.openConnection();
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream())) ;
 
-    }
+        String line = null;
+        String regexPattern = "[ ] +";
 
-    private static String getUrlContents(String urlString)
-    {
-        StringBuilder content = new StringBuilder();
+        while ((line = bufferedReader.readLine()) != null) {
+            String[] info = line.split(regexPattern);
 
-        // many of these calls can throw exceptions, so i've just
-        // wrapped them all in one try/catch statement.
-        try
-        {
-            // create a url object
-            URL url = new URL(urlString);
+            if((!info[0].equals(null)) && (!info[1].equals(null)) && (!info[3].equals(null))) {
 
-            // create a urlconnection object
-            URLConnection urlConnection = url.openConnection();
+                System.out.println("\n\nName: " + info[0] +
+                        " \nFrequency: " + info[1] +
+                        " \nRank: " + info[3]);
 
-            // wrap the urlconnection in a bufferedreader
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-
-            String line;
-
-            // read from the urlconnection via the bufferedreader
-            while ((line = bufferedReader.readLine()) != null)
-            {
-                content.append(line + "\n");
+                data.put(info[0], new Surname(info[0], Double.parseDouble(info[1]), Integer.parseInt(info[3])));
             }
-            bufferedReader.close();
+            //System.out.println(Arrays.toString(info));
+
         }
 
+        bufferedReader.close();
+        ObjectOutputStream outputFile = new ObjectOutputStream((new FileOutputStream("./surname.dat")));
+        outputFile.writeObject(data);
+        outputFile.close();
 
-        catch(Exception e)
-        {
-            e.printStackTrace();
-        }
-        return content.toString();
     }
 
 
